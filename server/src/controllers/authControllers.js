@@ -4,11 +4,22 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const registerValidation = [
-  body("username").trim().notEmpty(),
+  body("username")
+    .trim()
+    .notEmpty()
+    .withMessage("Username is required.")
+    .isLength({ min: 0, max: 15 })
+    .withMessage("Username must not excced 15 characters.")
+    .matches(/^(?!.*\.\.)(?![._-])(?!.*[._-]$)[A-Za-z0-9._-]$/)
+    .withMessage(
+      "Username can only contain letters, numbers and '.', '-' and '_'. Note: username cannot begin or end with '.', '-' or '_'.",
+    ),
   body("email")
     .trim()
     .notEmpty()
+    .withMessage("E-mail address is required.")
     .isEmail()
+    .withMessage("E-mail address must be valid.")
     .custom(async (email) => {
       const exists = await prisma.user.findUnique({
         where: {
@@ -24,41 +35,71 @@ const registerValidation = [
   body("password")
     .trim()
     .notEmpty()
-    .isLength({ min: 8, max: 30})
+    .withMessage("Password is required.")
+    .isLength({ min: 8, max: 30 })
+    .withMessage("Password must be between 8 and 30 characters.")
     .matches(/[a-z]/)
+    .withMessage("Password must contain a lowercase letter.")
     .matches(/[A-Z]/)
+    .withMessage("Password must contain an uppercase letter.")
     .matches(/[\d]/)
-    .matches(/[^A-Za-z0-9]/),
+    .withMessage("Password must contain a number.")
+    .matches(/[^A-Za-z0-9]/)
+    .withMessage("Password must contain a symbol."),
   body("confirmPassword")
     .trim()
     .notEmpty()
     .custom((confirmPassword, { req }) => {
       if (confirmPassword !== req.body.password) {
-        throw new Error("Passwords do not match!")
+        throw new Error("Passwords do not match!");
       }
-      return true
-    })
+      return true;
+    }),
 ];
 
-export const register = async (req, res) => {
-  const { username, email, password } = req.body;
+export const getCurrentUser = async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: req.user.id,
+    },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+    },
+  });
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await prisma.user.create({
-      data: {
-        username: username,
-        email: email,
-        password: hashedPassword,
-      },
-    });
-
-    res.status(201).json(user);
-  } catch (err) {
-    return res.status(500).json({ error: "Could not register user." });
-  }
+  return res.json(user);
 };
+
+export const register = [
+  registerValidation,
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { username, email, password } = matchedData(req)
+
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const user = await prisma.user.create({
+        data: {
+          username: username,
+          email: email,
+          password: hashedPassword,
+        },
+      });
+
+      res.status(201).json(user);
+    } catch (err) {
+      return res.status(500).json({ error: "Could not register user." });
+    }
+  },
+];
 
 export const login = async (req, res) => {
   const { email, password } = req.body;

@@ -1,4 +1,14 @@
+import { body, matchedData, validationResult } from "express-validator";
 import prisma from "../../lib/prisma.js";
+
+const commentValidation = [
+  body("comment")
+    .trim()
+    .isEmpty()
+    .withMessage("Comment cant be empty")
+    .isLength({ max: 1000 })
+    .withMessage("Comment must not exceed 1000 characters."),
+];
 
 // User routes controllers
 
@@ -59,90 +69,112 @@ export const getComments = async (req, res) => {
   }
 };
 
-export const postComment = async (req, res) => {
-  const postId = parseInt(req.params.postId, 10);
-  const { body } = req.body;
+export const postComment = [
+  commentValidation,
 
-  try {
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(200).json({ error: errors.array() });
+    }
+
+    const postId = parseInt(req.params.postId, 10);
+    const { body } = matchedData(req);
+
+    try {
+      const post = await prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+
+      if (!post) {
+        return res.status(404).json({ error: "Could not find post" });
+      }
+
+      if (!body) {
+        return res.status(400).json({ error: "Comment is missing a body" });
+      }
+      const comment = await prisma.comment.create({
+        data: {
+          body,
+          postId,
+          userId: req.user.id,
+        },
+      });
+
+      res.status(201).json(comment);
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ error: `Could not create comment in post with id ${postId}.` });
+    }
+  },
+];
+
+export const patchComment = [
+  commentValidation,
+
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(200).json({ error: errors.array() });
+    }
+
+    const { body } = matchedData(req);
+    const postId = parseInt(req.params.postId, 10);
+    const commentId = parseInt(req.params.commentId, 10);
+
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
       },
     });
 
-    if (!post) {
-      return res.status(404).json({ error: "Could not find post" });
-    }
-
-    if (!body) {
-      return res.status(400).json({ error: "Comment is missing a body" });
-    }
-    const comment = await prisma.comment.create({
-      data: {
-        body,
-        postId,
-        userId: req.user.id,
-      },
-    });
-
-    res.status(201).json(comment);
-  } catch (err) {
-    return res
-      .status(500)
-      .json({ error: `Could not create comment in post with id ${postId}.` });
-  }
-};
-
-export const patchComment = async (req, res) => {
-  const postId = parseInt(req.params.postId, 10);
-  const commentId = parseInt(req.params.commentId, 10);
-  const { body } = req.body;
-
-  const post = await prisma.post.findUnique({
-    where: {
-      id: postId,
-    },
-  });
-
-  const comment = await prisma.comment.findUnique({
-    where: {
-      id: commentId,
-    },
-  });
-
-  if (!post) {
-    return res.status(404).json({ error: "Could not find post." });
-  }
-
-  if (!comment) {
-    return res.status(404).json({ error: "Could not find comment." });
-  }
-
-  if (comment.userId !== req.user.id && !req.user.isAdmin) {
-    return res.status(403).json({ error: "Access to comment was forbidden." });
-  }
-
-  if (!body) {
-    return res.status(400).json({ error: "Coment is missing a body." });
-  }
-
-  try {
-    const patchedComment = await prisma.comment.update({
+    const comment = await prisma.comment.findUnique({
       where: {
         id: commentId,
       },
-      data: {
-        body: body,
-      },
     });
 
-    res.status(200).json(patchedComment);
-  } catch (err) {
-    return res.status(500).json({
-      error: `Could not update comment with id ${commentId} in post with id ${postId}.`,
-    });
-  }
-};
+    if (!post) {
+      return res.status(404).json({ error: "Could not find post." });
+    }
+
+    if (!comment) {
+      return res.status(404).json({ error: "Could not find comment." });
+    }
+
+    if (comment.userId !== req.user.id && !req.user.isAdmin) {
+      return res
+        .status(403)
+        .json({ error: "Access to comment was forbidden." });
+    }
+
+    if (!body) {
+      return res.status(400).json({ error: "Coment is missing a body." });
+    }
+
+    try {
+      const patchedComment = await prisma.comment.update({
+        where: {
+          id: commentId,
+        },
+        data: {
+          body: body,
+        },
+      });
+
+      res.status(200).json(patchedComment);
+    } catch (err) {
+      return res.status(500).json({
+        error: `Could not update comment with id ${commentId} in post with id ${postId}.`,
+      });
+    }
+  },
+];
 
 export const deleteComment = async (req, res) => {
   const postId = parseInt(req.params.postId, 10);
@@ -278,7 +310,7 @@ export const patchTogglePublish = async (req, res) => {
           id: postId,
         },
         data: {
-            isPublished: true,
+          isPublished: true,
         },
       });
     }
