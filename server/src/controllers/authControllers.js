@@ -1,6 +1,44 @@
+import { body, matchedData, validationResult } from "express-validator";
 import prisma from "../../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+const registerValidation = [
+  body("username").trim().notEmpty(),
+  body("email")
+    .trim()
+    .notEmpty()
+    .isEmail()
+    .custom(async (email) => {
+      const exists = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (exists) {
+        throw new Error("An account with this e-mail address already exists!");
+      }
+      return true;
+    }),
+  body("password")
+    .trim()
+    .notEmpty()
+    .isLength({ min: 8, max: 30})
+    .matches(/[a-z]/)
+    .matches(/[A-Z]/)
+    .matches(/[\d]/)
+    .matches(/[^A-Za-z0-9]/),
+  body("confirmPassword")
+    .trim()
+    .notEmpty()
+    .custom((confirmPassword, { req }) => {
+      if (confirmPassword !== req.body.password) {
+        throw new Error("Passwords do not match!")
+      }
+      return true
+    })
+];
 
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
