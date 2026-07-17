@@ -1,19 +1,24 @@
 .Button {
-    padding: 5px;
+  position: relative;
 
-    border: none;
-    border-radius: 5px;
+  padding: 5px 15px;
 
-    outline: 1px solid rgb(140, 140, 140);
-    outline-offset: 0px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-s);
 
-    
-}
+  background-color: rgb(230, 230, 230);
 
-.Button:active {
-    
+  box-shadow: 5px 5px 10px rgba(140, 140, 140, 0.8);
+
+  font-size: var(--font-size-m);
+
+  transition: transform 100ms ease;
 }
 
 .Button:hover {
+    background-color: rgb(210, 210, 210);
+}
 
+.Button:active {
+    transform: translateY(3px);
 }

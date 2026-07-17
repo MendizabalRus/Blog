@@ -1,0 +1,27 @@
+.input {
+    padding: 5px 10px;
+
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-s);
+    
+    outline: none;
+}
+
+.input:focus {
+    border: 1px solid var(--blue);
+}
+
+.valid {
+    border: 1px solid var(--green);
+    color: var(--green);
+}
+
+.invalid {
+    border: 1px solid var(--red);
+    color: var(--red);   
+}
+
+.error {
+    color: var(--red);
+    font-size: var(--font-size-m);
+}

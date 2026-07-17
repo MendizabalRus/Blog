@@ -1,2 +1,21 @@
 :root {
+    /* Font style */
+    font-family: 'Lucida Grande', Verdana, sans-serif;
+    --font-size-s: 16px;
+    --font-size-m: 18px;
+    --font-size-l: 20px;
+
+    /* Colors */
+
+    --background-color: rgba(230, 230, 230, 1);
+    --border-color: rgba(140, 140, 140, 1);
+
+    --blue: rgb(1, 133, 221);
+    --red: rgb(134, 10, 10);
+    --green: rgb(21, 141, 5);
+    
+    /* Borders */
+
+    --border-radius-s: 5px;
+    --border-radius-l: 10px;
 }
