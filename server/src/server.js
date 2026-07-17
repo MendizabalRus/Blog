@@ -6,8 +6,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const authRoutes = require("./routes/authRoutes.js");
-const postsRoutes = require("./routes/postsRoutes.js");
+import authRoutes from "./routes/authRoutes.js";
+import postsRoutes from "./routes/postsRoutes.js";
 
 const app = express();
 

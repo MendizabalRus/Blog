@@ -1,6 +1,6 @@
 import { Router } from "express";
-import authenticateJWT from "../middleware/authenticateJWT";
-import authorizeAdmin from "../middleware/authorizeAdmin";
+import authenticateJWT from "../middleware/authenticateJWT.js";
+import authorizeAdmin from "../middleware/authorizeAdmin.js";
 import {
   getAllPublishedPosts,
   getPost,
