@@ -1,0 +1,19 @@
+.Button {
+    padding: 5px;
+
+    border: none;
+    border-radius: 5px;
+
+    outline: 1px solid rgb(140, 140, 140);
+    outline-offset: 0px;
+
+    
+}
+
+.Button:active {
+    
+}
+
+.Button:hover {
+
+}
