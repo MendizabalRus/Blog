@@ -1,0 +1,19 @@
+.logIn {
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.logIn form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.logIn form > Button {
+    align-self: center;
+}
