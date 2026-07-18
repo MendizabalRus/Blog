@@ -10,7 +10,7 @@ const registerValidation = [
     .withMessage("Username is required.")
     .isLength({ min: 0, max: 15 })
     .withMessage("Username must not excced 15 characters.")
-    .matches(/^(?!.*\.\.)(?![._-])(?!.*[._-]$)[A-Za-z0-9._-]$/)
+    .matches(/^(?!.*\.\.)(?![._-])(?!.*[._-]$)[A-Za-z0-9._-]+$/)
     .withMessage(
       "Username can only contain letters, numbers and '.', '-' and '_'. Note: username cannot begin or end with '.', '-' or '_'.",
     ),
@@ -66,6 +66,7 @@ export const getCurrentUser = async (req, res) => {
       id: true,
       username: true,
       email: true,
+      isAdmin: true,
     },
   });
 
@@ -81,7 +82,7 @@ export const register = [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { username, email, password } = matchedData(req)
+    const { username, email, password } = matchedData(req);
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -122,7 +123,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(
           {
             id: user.id,
-            role: user.isAdmin,
+            isAdmin: user.isAdmin,
           },
           process.env.JWT_SECRET,
           {
@@ -130,9 +131,67 @@ export const login = async (req, res) => {
           },
         );
 
-        return res.json({ token });
+        return res.json({
+          token,
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            isAdmin: user.isAdmin,
+          },
+        });
       }
     }
+  } catch (err) {
+    return res.status(500).json({ error: "Could not log in user." });
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Could not find user." });
+    }
+
+    if (!user.isAdmin) {
+      return res
+        .status(403)
+        .json({ error: "Access forbidden. Non-admin credentials." });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      return res.status(401).json({ error: "Incorrect credentials " });
+    }
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.isAdmin,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
+
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        isAdmin: user.isAdmin,
+      },
+    });
   } catch (err) {
     return res.status(500).json({ error: "Could not log in user." });
   }
