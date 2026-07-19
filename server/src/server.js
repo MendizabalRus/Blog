@@ -19,6 +19,9 @@ app.use(
   }),
 );
 
+// Parse json
+app.use(express.json())
+
 // Authenitcation related petitions
 app.use("/api/auth", authRoutes);
 

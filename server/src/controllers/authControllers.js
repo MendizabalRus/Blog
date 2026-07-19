@@ -76,6 +76,7 @@ export const getCurrentUser = async (req, res) => {
 export const register = [
   registerValidation,
   async (req, res, next) => {
+    console.log(req.body)
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -94,7 +95,7 @@ export const register = [
           password: hashedPassword,
         },
       });
-
+      console.log("Reached pre res.status?")
       res.status(201).json(user);
     } catch (err) {
       return res.status(500).json({ error: "Could not register user." });
