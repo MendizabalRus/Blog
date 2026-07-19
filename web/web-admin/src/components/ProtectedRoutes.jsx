@@ -12,11 +12,11 @@ const ProtectedRoutes = () => {
   }
 
   if (!user) {
-    return <Navigate to="/log-in" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (!user.isAdmin) {
-    return <Navigate to="/log-in" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;

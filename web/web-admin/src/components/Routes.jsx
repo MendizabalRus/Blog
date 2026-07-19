@@ -7,10 +7,10 @@ import Dashboard from './pages/Dashboard.jsx';
 const routes = [
   {
     path: '/',
-    element: <Navigate to="/log-in" replace />,
+    element: <Navigate to="/login" replace />,
   },
   {
-    path: '/log-in',
+    path: '/login', 
     element: <LogIn />,
   },
   {
