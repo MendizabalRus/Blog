@@ -1,14 +1,23 @@
+// Packages
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router';
 
-import '../../../shared/style/_variables';
-import '../../../shared/style/reset';
-import '../style/_reset.css';
+// Style
+import '../style/main.css';
+import '../../../shared/style/_variables.css';
+import '../../../shared/style/_reset.css';
 
-import App from './App.jsx';
+// Files
+import { AuthProvider } from '../../../shared/context/authContext.jsx';
+import routes from './Routes.jsx';
+
+const router = createBrowserRouter(routes);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <AuthProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </AuthProvider>
   </StrictMode>,
 );
