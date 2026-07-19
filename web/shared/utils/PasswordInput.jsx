@@ -18,6 +18,7 @@ const PasswordInput = ({
   placeholder,
   onChange,
   format = "[^A-Za-z0-9]{8,30}",
+  confirmPassword = false,
   required = true,
 }) => {
   const [interacted, setInteracted] = useState(false);
@@ -81,7 +82,7 @@ const PasswordInput = ({
           className={style.visibilitySvg}
         />
       </div>
-      {interacted && (
+      {interacted && !confirmPassword && (
         <div className={style.requirements}>
           {requirements.map((r) => {
             return (
