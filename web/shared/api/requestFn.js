@@ -1,7 +1,6 @@
 const BASE_URL = "http://localhost:8080/api";
 
 const request = async (endpoint, options = {}) => {
-  console.log(options)
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {

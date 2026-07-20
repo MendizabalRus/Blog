@@ -5,8 +5,14 @@ export const me = () => {
 };
 
 export const login = (content) => {
-  console.log("auth")
   return request("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(content),
+  });
+};
+
+export const adminLogin = (content) => {
+  return request("/auth/admin/login", {
     method: "POST",
     body: JSON.stringify(content),
   });

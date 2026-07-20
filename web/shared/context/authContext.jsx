@@ -8,12 +8,29 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Set the the user`s JWT in the storage.
+  // Set the the user`s JWT in the storage. USER
   const login = async (credentials) => {
-    console.log("authContext")
     setLoading(true);
+
     try {
       const result = await auth.login(credentials);
+
+      localStorage.setItem("token", result.token);
+
+      setUser(result.user);
+
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Set the the user`s JWT in the storage. ADMIN
+  const adminLogin = async (credentials) => {
+    setLoading(true);
+    
+    try {
+      const result = await auth.adminLogin(credentials);
 
       localStorage.setItem("token", result.token);
 
@@ -61,6 +78,7 @@ export const AuthProvider = ({ children }) => {
         user,
         loading,
         login,
+        adminLogin,
         logout,
         loadUser,
       }}
