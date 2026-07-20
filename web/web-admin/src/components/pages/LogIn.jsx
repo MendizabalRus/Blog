@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
 // Style
-import style from "../../style/pages/LogIn.module.css"
+import style from '../../style/pages/LogIn.module.css';
 
 // Files
 import Button from '../../../../shared/utils/Button.jsx';
 import EmailInput from '../../../../shared/utils/EmailInput.jsx';
 import PasswordInput from '../../../../shared/utils/PasswordInput.jsx';
+
+import { useAuth } from '../../../../shared/context/authContext.jsx';
 
 const LogIn = () => {
   const [email, setEmail] = useState('');
@@ -16,25 +18,16 @@ const LogIn = () => {
 
   const navigate = useNavigate();
 
+  const { adminLogin } = useAuth();
+
   const handleLogIn = async (e) => {
-    const data = new FormData(e.target);
-    const loginData = Object.fromEntries(data);
+    e.preventDefault();
 
     try {
-      const response = await fetch(
-        'http://localhost:8080/api/auth/admin/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ loginData }),
-        },
-      );
+      const response = await adminLogin({ email, password });
 
-      const result = await response.json();
-      console.log(result)
-      
+      console.log(response);
+
       navigate('/dashboard');
     } catch (err) {
       console.error(err || 'Something went wrong...');

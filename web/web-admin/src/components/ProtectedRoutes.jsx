@@ -6,7 +6,7 @@ import { useAuth } from '../../../shared/context/authContext.jsx';
 
 const ProtectedRoutes = () => {
   const { loading, user } = useAuth();
-
+  
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -18,6 +18,7 @@ const ProtectedRoutes = () => {
   if (!user.isAdmin) {
     return <Navigate to="/login" replace />;
   }
+
 
   return <Outlet />;
 };
