@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   // Set the the user`s JWT in the storage.
   const login = async (credentials) => {
+    console.log("authContext")
     setLoading(true);
     try {
       const result = await auth.login(credentials);
@@ -17,6 +18,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", result.token);
 
       setUser(result.user);
+
+      return result;
     } finally {
       setLoading(false);
     }
