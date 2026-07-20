@@ -95,7 +95,6 @@ export const register = [
           password: hashedPassword,
         },
       });
-      console.log("Reached pre res.status?")
       res.status(201).json(user);
     } catch (err) {
       return res.status(500).json({ error: "Could not register user." });
@@ -104,6 +103,7 @@ export const register = [
 ];
 
 export const login = async (req, res) => {
+  console.log("Controller")
   const { email, password } = req.body;
 
   try {

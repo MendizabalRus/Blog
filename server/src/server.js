@@ -14,7 +14,10 @@ const app = express();
 // CORS config.
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173", // Web admin
+      "http://localhost:5174", // Web user
+    ],
     credentials: true,
   }),
 );
