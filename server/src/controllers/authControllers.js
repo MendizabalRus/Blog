@@ -103,7 +103,6 @@ export const register = [
 ];
 
 export const login = async (req, res) => {
-  console.log("Controller")
   const { email, password } = req.body;
 
   try {
@@ -157,7 +156,7 @@ export const adminLogin = async (req, res) => {
         email: email,
       },
     });
-
+    
     if (!user) {
       return res.status(404).json({ error: "Could not find user." });
     }
@@ -194,6 +193,7 @@ export const adminLogin = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error(err)
     return res.status(500).json({ error: "Could not log in user." });
   }
 };
