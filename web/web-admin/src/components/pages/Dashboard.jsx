@@ -1,5 +1,6 @@
 // Packages
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 
 // Style
 import style from '../../style/pages/Dashboard.module.css';
@@ -9,6 +10,8 @@ import Button from '../../../../shared/utils/Button.jsx';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleGetAllPusblishedPosts = async () => {
@@ -29,33 +32,33 @@ const Dashboard = () => {
 
   return (
     <div className={style.Dashboard}>
-      <section className={style.left}>
-        <h1>Posts</h1>
-        {posts.map((post) => {
-          return (
-            <PostPreview
-              title={post.title}
-              publishDate={post.createdAt}
-              comments={post.comments}
-            />
-          );
-        })}
-        <PostPreview
-              title="Paper and ink: the first step to a well structured project"
-              publishDate="06-07-2026"
-              comments="45"
-            />
+      <section className={style.new}>
+        <h1>Feeling inspired?</h1>
+        <Button value="Write a post!" onClick={() => navigate('/redact')} />
       </section>
-      <div className={style.right}>
-        <section className={style.new}>
-          <h1>Feeling inspired?</h1>
-          <Button value="Write a post!" />
-        </section>
+      <div className={style.records}>
         <section className={style.kpis}>
-            <Kpi title="Posts" data="7"/>
-            <Kpi title="Comments" data="47" />
-            <Kpi title="Users" data="183" />
-            <Kpi title="Random" data="88"/>
+          <Kpi title="Posts" data="7" />
+          <Kpi title="Comments" data="47" />
+          <Kpi title="Users" data="183" />
+          <Kpi title="Random" data="88" />
+        </section>
+        <section className={style.posts}>
+          <h1>Posts</h1>
+          {posts.map((post) => {
+            return (
+              <PostPreview
+                title={post.title}
+                publishDate={post.createdAt}
+                comments={post.comments}
+              />
+            );
+          })}
+          <PostPreview
+            title="Paper and ink: the first step to a well structured project"
+            publishDate="06-07-2026"
+            comments="45"
+          />
         </section>
       </div>
     </div>
@@ -76,10 +79,10 @@ const PostPreview = ({ title, publishDate, comments }) => {
 };
 
 const Kpi = ({ title, data }) => {
-    return(
-        <section className={style.Kpi}>
-            <h2>{title}</h2>
-            <h1>{data}</h1>
-        </section>
-    )
-}
+  return (
+    <section className={style.Kpi}>
+      <h2>{title}</h2>
+      <h1>{data}</h1>
+    </section>
+  );
+};

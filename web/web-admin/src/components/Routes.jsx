@@ -1,8 +1,9 @@
-import { Navigate } from "react-router"
+import { Navigate } from 'react-router';
 
 import LogIn from './pages/LogIn.jsx';
 import ProtectedRoutes from './ProtectedRoutes.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import Redact from './pages/Redact.jsx';
 
 const routes = [
   {
@@ -10,7 +11,7 @@ const routes = [
     element: <Navigate to="/login" replace />,
   },
   {
-    path: '/login', 
+    path: '/login',
     element: <LogIn />,
   },
   {
@@ -19,6 +20,10 @@ const routes = [
       {
         path: '/dashboard',
         element: <Dashboard />,
+      },
+      {
+        path: '/redact',
+        element: <Redact />,
       },
     ],
   },
