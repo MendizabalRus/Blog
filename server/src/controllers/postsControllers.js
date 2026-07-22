@@ -4,8 +4,8 @@ import prisma from "../../lib/prisma.js";
 const commentValidation = [
   body("comment")
     .trim()
-    .isEmpty()
-    .withMessage("Comment cant be empty")
+    .notEmpty()
+    .withMessage("Comment cannot be empty")
     .isLength({ max: 1000 })
     .withMessage("Comment must not exceed 1000 characters."),
 ];
@@ -19,6 +19,8 @@ export const getAllPublishedPosts = async (req, res) => {
         isPublished: true,
       },
     });
+
+    console.log(allPublishedPosts);
 
     return res.status(200).json(allPublishedPosts);
   } catch (err) {
@@ -76,11 +78,11 @@ export const postComment = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(200).json({ error: errors.array() });
+      return res.status(400).json({ error: errors.array() });
     }
 
     const postId = parseInt(req.params.postId, 10);
-    const { body } = matchedData(req);
+    const { comment } = matchedData(req);
 
     try {
       const post = await prisma.post.findUnique({
@@ -93,19 +95,20 @@ export const postComment = [
         return res.status(404).json({ error: "Could not find post" });
       }
 
-      if (!body) {
+      if (!comment) {
         return res.status(400).json({ error: "Comment is missing a body" });
       }
-      const comment = await prisma.comment.create({
+      const postComment = await prisma.comment.create({
         data: {
-          body,
+          body: comment,
           postId,
           userId: req.user.id,
         },
       });
 
-      res.status(201).json(comment);
+      res.status(201).json(postComment);
     } catch (err) {
+      console.error(err)
       return res
         .status(500)
         .json({ error: `Could not create comment in post with id ${postId}.` });
@@ -234,6 +237,7 @@ export const getAllPosts = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
+  console.log(req.body);
   const { title, body } = req.body;
 
   try {
@@ -241,11 +245,17 @@ export const createPost = async (req, res) => {
       data: {
         title,
         body,
+        author: {
+          connect: {
+            id: req.user.id,
+          },
+        },
       },
     });
 
     return res.status(201).json(createPost);
-  } catch {
+  } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Could not create post." });
   }
 };
@@ -295,28 +305,17 @@ export const patchTogglePublish = async (req, res) => {
       return res.status(404).json({ error: "Could not find post" });
     }
 
-    if (post.isPublished) {
-      await prisma.post.findUnique({
-        where: {
-          id: postId,
-        },
-        data: {
-          isPublished: false,
-        },
-      });
-    } else {
-      await prisma.post.findUnique({
-        where: {
-          id: postId,
-        },
-        data: {
-          isPublished: true,
-        },
-      });
-    }
+    await prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        isPublished: !post.isPublished,
+      },
+    });
 
     return res.status(200).json(post.isPublished);
-  } catch (err) {
+  } catch {
     return res
       .status(500)
       .json({ error: "Could not toggle post's isPublish status" });
