@@ -1,0 +1,36 @@
+.WriteComment {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 10px 20px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.WriteComment > form {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.WriteComment > form > textarea {
+    height: 100px;
+
+    padding: 5px 10px;
+
+    font-size: var(--font-size-m);
+    resize: none;
+}
+
+.WriteComment > form > button {
+    align-self: flex-end;
+
+    padding: 5px 10px;
+
+    font-size: var(--font-size-l);
+}

@@ -38,32 +38,6 @@
 }
 
 /*
-    PostPreview
-*/
-
-.PostPreview {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-
-  padding: 5px;
-
-  border-radius: 5px;
-
-  overflow: hidden;
-}
-
-.PostPreview:hover {
-  background-color: rgba(190, 190, 190, 0.5);
-}
-
-.info {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-/*
     Kpi
 */
 

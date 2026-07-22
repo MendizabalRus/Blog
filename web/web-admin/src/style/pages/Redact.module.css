@@ -6,4 +6,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 25px;
+
+    padding: 100px 200px;
+}
+
+.Redact > input {
+    width: 60%;
+
+    padding: 5px;
+
+    font-size: var(--font-size-m);
 }

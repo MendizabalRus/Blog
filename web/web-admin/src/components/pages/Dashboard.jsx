@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import style from '../../style/pages/Dashboard.module.css';
 
 // Files
+import PostPreview from "../utils/PostPreview.jsx";
 import Button from '../../../../shared/utils/Button.jsx';
 
 const Dashboard = () => {
@@ -13,14 +14,16 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
     const handleGetAllPusblishedPosts = async () => {
-      const response = await fetch(
-        'http://localhost:8080/api/posts/published',
-        {
-          method: 'GET',
+      const response = await fetch('http://localhost:8080/api/posts/', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer: ${token}`,
         },
-      );
+      });
 
       const result = await response.json();
 
@@ -28,7 +31,26 @@ const Dashboard = () => {
     };
 
     handleGetAllPusblishedPosts();
-  }, []);
+  }, [token]);
+
+  const togglePublish = async (postId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/posts/${postId}/publish`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const result = await response.json();
+      console.log(result);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className={style.Dashboard}>
@@ -44,39 +66,28 @@ const Dashboard = () => {
           <Kpi title="Random" data="88" />
         </section>
         <section className={style.posts}>
-          <h1>Posts</h1>
+          <div>
+            <h1>Posts</h1>
+          </div>
           {posts.map((post) => {
             return (
               <PostPreview
+                key={post.id}
                 title={post.title}
                 publishDate={post.createdAt}
                 comments={post.comments}
+                isPublished={post.isPublished}
+                navigate={() => navigate(`/${post.id}`)}
+                togglePublish={() => togglePublish(post.id)}
               />
             );
           })}
-          <PostPreview
-            title="Paper and ink: the first step to a well structured project"
-            publishDate="06-07-2026"
-            comments="45"
-          />
         </section>
       </div>
     </div>
   );
 };
 export default Dashboard;
-
-const PostPreview = ({ title, publishDate, comments }) => {
-  return (
-    <div className={style.PostPreview}>
-      <h3>{title}</h3>
-      <div className={style.info}>
-        <p>Comments: {comments}</p>
-        <p>Published: {publishDate}</p>
-      </div>
-    </div>
-  );
-};
 
 const Kpi = ({ title, data }) => {
   return (

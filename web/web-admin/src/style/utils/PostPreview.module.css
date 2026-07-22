@@ -1,0 +1,47 @@
+.PostPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  padding: 5px;
+
+  border-radius: 5px;
+
+  overflow: hidden;
+}
+
+.PostPreview:hover {
+  background-color: rgba(190, 190, 190, 0.5);
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex; 
+  flex-direction: row;
+  gap: 5px;
+}
+
+.buttons div {
+  width: fit-content;
+}
+
+.buttons img {
+  width: 30px;
+  height: auto;
+
+  padding: 5px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

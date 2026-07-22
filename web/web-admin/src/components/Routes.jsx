@@ -4,6 +4,7 @@ import LogIn from './pages/LogIn.jsx';
 import ProtectedRoutes from './ProtectedRoutes.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Redact from './pages/Redact.jsx';
+import Post from "./pages/Post.jsx";
 
 const routes = [
   {
@@ -24,6 +25,10 @@ const routes = [
       {
         path: '/redact',
         element: <Redact />,
+      },
+      {
+        path: '/:postId',
+        element: <Post />,
       },
     ],
   },
