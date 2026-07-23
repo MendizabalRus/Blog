@@ -6,7 +6,8 @@ import { useParams } from 'react-router';
 import style from '../../style/pages/Post.module.css';
 
 // Files
-import WriteComment from '../utils/WriteComment';
+import WriteComment from '../utils/WriteComment.jsx';
+import Comment from '../utils/Comment.jsx';
 
 const Post = () => {
   const [post, setPost] = useState({});
@@ -62,9 +63,14 @@ const Post = () => {
       </section>
       <section className={style.comments}>
         <WriteComment postId={postId} />
-        {comments.map((comment) => {
-          return <p>{comment.body}</p>;
-        })}
+        {comments.map((comment) => (
+          <Comment
+            key={comment.id}
+            comment={comment.body}
+            author={comment.user.username}
+            publishedAt={comment.createdAt}
+          />
+        ))}
       </section>
     </div>
   );

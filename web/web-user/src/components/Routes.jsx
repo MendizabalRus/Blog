@@ -1,4 +1,4 @@
-import MainLayout from "./layouts/MainLayout.jsx"
+import MainLayout from './layouts/MainLayout.jsx';
 import Home from './pages/Home.jsx';
 import Post from './pages/Post.jsx';
 import LogIn from './pages/LogIn.jsx';

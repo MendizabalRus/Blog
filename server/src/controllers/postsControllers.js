@@ -61,6 +61,13 @@ export const getComments = async (req, res) => {
       where: {
         postId,
       },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
     });
 
     res.status(200).json(comments);
@@ -108,7 +115,7 @@ export const postComment = [
 
       res.status(201).json(postComment);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       return res
         .status(500)
         .json({ error: `Could not create comment in post with id ${postId}.` });
